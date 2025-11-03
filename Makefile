@@ -5,7 +5,7 @@ F_CPU = 13000000UL
 CFLAGS = -mmcu=$(CHIP) -Os -DF_CPU=$(F_CPU) -Wall
 SRC_DIR = src
 BUILD = build
-TARGET = MBI5024
+TARGET = main
 
 ##################################################
 # PIPELINE DE COMPILATION :
@@ -42,7 +42,7 @@ install: $(BUILD)/$(TARGET).bin
 
 # réinstalle le code d'origine
 backup:
-	avrdude -p $(CHIP) -c usbasp -U flash:r:backup1.hex:i
+	avrdude -p $(CHIP) -c usbasp -U flash:w:pov-demo.bin:r
 
 clean:
 	rm -rf $(BUILD)
