@@ -11,12 +11,11 @@ void delay(int delay){
 
 int main(void)
 {
-    DDRB |= (1 << PB5); // PB5 en sortie
-    int cpt = 1; 
-    for(long i =1; i<1000000; i++) {
+    DDRB |= (1 << PB5); // PB5 en sortie 
+    while (1) {
         PORTB &= ~(1 << PB5); // PB5 à 1 
-        delay(i);
+        delay(200);
         PORTB |= (1 << PB5);
-        delay(i);
+        delay(200);
     }
 }

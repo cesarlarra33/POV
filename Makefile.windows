@@ -1,0 +1,25 @@
+CC = avr-gcc
+CFLAGS = -mmcu=atmega328p -Os -DF_CPU=13000000UL
+SRC_DIR = demo_led
+BUILD = build
+TARGET = main
+
+all: $(BUILD)/$(TARGET).hex
+
+$(BUILD):
+	if not exist $(BUILD) mkdir $(BUILD)
+
+$(BUILD)/$(TARGET).elf: $(SRC_DIR)/$(TARGET).c | $(BUILD)
+	$(CC) $(CFLAGS) -o $@ $<
+
+$(BUILD)/$(TARGET).hex: $(BUILD)/$(TARGET).elf
+	avr-objcopy -O ihex -R .eeprom $< $@
+
+install: $(BUILD)/$(TARGET).hex
+	avrdude -p atmega328p -c usbasp -U flash:w:$<:i
+
+backup : $(BUILD)/$(TARGET).hex
+	avrdude -p atmega328p -c usbasp -U flash:w:code_recup:i
+
+clean:
+	if exist $(BUILD) rmdir /s /q $(BUILD)
