@@ -7,4 +7,4 @@ Lisa Fredon
 Bouchra EZZAGMOUNY
 César Larragueta. 
 
-Boites POV utilisées : 14 et 22 et 23. 
+Boites POV utilisées : 14 et 22 et 23. (remplacer par 47 une des trois) 
