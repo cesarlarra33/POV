@@ -1,10 +1,19 @@
-FIRMWARE := glow_LED
-all:
-	avr-gcc -mmcu=atmega328p -DF_CPU=16000000 -Os -o $(FIRMWARE)/main.elf $(FIRMWARE)/main.c
-	avr-objcopy -O binary $(FIRMWARE)/main.elf $(FIRMWARE)/main.bin
+FIRMWARE := USART
+CC := avr-gcc
+OBJCOPY := avr-objcopy
+AVRDUDE := avrdude
+CFLAGS := -mmcu=atmega328p -DF_CPU=16000000UL -Os -Wall
 
-install:
-	avrdude -p atmega328p -c arduino -P /dev/ttyACM0 -U flash:w:$(FIRMWARE)/main.bin
+all: $(FIRMWARE)/main.elf $(FIRMWARE)/main.bin
+
+$(FIRMWARE)/main.elf: $(FIRMWARE)/main.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+$(FIRMWARE)/main.bin: $(FIRMWARE)/main.elf
+	$(OBJCOPY) -O binary -j .text -j .data $< $@
+
+install: $(FIRMWARE)/main.bin
+	$(AVRDUDE) -p atmega328p -c usbasp -U flash:w:$<
 
 clean:
-	rm $(FIRMWARE)/main.elf $(FIRMWARE)/main.bin
+	rm -f $(FIRMWARE)/main.elf $(FIRMWARE)/main.bin
