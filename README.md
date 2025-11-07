@@ -15,7 +15,18 @@ Pour compiler tout le projet dans build/ :
 ```bash
 make
 ```
-Pour flasher l'éxecutable produit
+Pour flasher l'éxecutable produit dans le micro controleur : 
+```bash 
+make install
+```
+Pour supprimer tout le repertoire build/ :
+```bash 
+make clean
+```
+Pour réinstaller le binaire de démo du projet POV :
+```bash
+make backup 
+```
 
 
 ## Comment ça fonctionne ? 
