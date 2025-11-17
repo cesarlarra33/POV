@@ -14,7 +14,7 @@ ISR(HALL_INT) {
     new_rotation = 1;    
     // décomenter pour verifie que ca fonctionne si on a bien une ligne dasn l'axe du capteur. 
     //delay_us_ticks(50000); 
-    //display_buffer_during_us((uint8_t[]){1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}, 10);
+    //display_mask_during_us(0xFFFF, 10);
 }
 
 void configure_HALL_interrupt(){
