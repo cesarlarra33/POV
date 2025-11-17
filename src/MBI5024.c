@@ -27,6 +27,12 @@ void set_all_leds_outputs(){
     set_OE(0);
 }
 
+static void mask_to_buffer(uint16_t mask, uint8_t dest[NB_LEDS]) {
+    for (uint8_t i = 0; i < NB_LEDS; ++i) {
+        dest[i] = (mask >> i) & 0x1U;
+    }
+}
+
 void delay_until_tick(uint16_t target){
     // TCNT1 est sur 16 bits donc reboucle de 0xFFFF à 0, donc on regarde d'abord si la cible 
     // est devant ou derrière comparant la delta_t courant à la cible avec la moitié, d'un uint_16t
@@ -168,6 +174,8 @@ void display_patterns(pattern_t pattern_dict[]){
     // on force à 1 tick pour eviter 0
     if (ticks_on < 1) ticks_on = 1;
 
+    uint8_t mask_buffer[NB_LEDS];
+
     for (int i = 0; i < PATTERN_DICT_SIZE; ++i) {
         uint16_t current_angle = pattern_dict[i].angle;
 
@@ -184,8 +192,9 @@ void display_patterns(pattern_t pattern_dict[]){
         delay_until_tick(preload_target);
         // si on est dans un nouveau tour trop tard on arrête
         if (new_rotation) break;
-        // on précharge le buffer
-        preload_buffer(pattern_dict[i].buffer);
+    // on précharge le buffer généré à partir du masque
+    mask_to_buffer(pattern_dict[i].mask, mask_buffer);
+    preload_buffer(mask_buffer);
 
         // attendre l'instant exact de l'angle puis affiche le buffer 
         delay_until_tick(target);
