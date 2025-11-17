@@ -67,6 +67,6 @@ void display_mask_at_angle(uint16_t mask, uint32_t angle_deg);
 /// @brief affiche chaque buffer du disctionnaire pattern à son angle associé. 
 /// cette fonction aussi gère le timing toute seule
 /// @param pattern_dict Le dictionnaire de patterns à afficher
-void display_patterns(const pattern_t pattern_dict[]);
+void display_patterns(const pattern_t pattern_dict[], uint16_t pattern_count);
 
 #endif 

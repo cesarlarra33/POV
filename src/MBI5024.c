@@ -1,4 +1,9 @@
+#include <avr/pgmspace.h>
+
 #include "MBI5024.h"
+
+static inline void preload_mask(uint16_t mask);
+static inline uint16_t wrap_angle(int16_t angle);
 
 void set_CLOCK_as_output(){
     set_as_output(&DDRB, CLOCK); 
@@ -77,8 +82,7 @@ void set_LE(int up_down){
 }
 
 
-// load les bits de mask dans SDI (registe à décalage), peut servir pour le preload le buffer
-static void shift_mask_bits(uint16_t mask){
+static inline void preload_mask(uint16_t mask){
     for (uint8_t i = 0; i < NB_LEDS; ++i) {
         set_SDI((mask >> i) & 0x1U);
         CLOCK_UP();
@@ -86,10 +90,23 @@ static void shift_mask_bits(uint16_t mask){
     }
 }
 
+
+// fais en sorte que si jamais par exemple il est midi, 
+// on va vouloir affichée l'aiguille des heures à 0 deg
+// mais avec les offsets d'angle sur le mask aguille on peut avoir
+// des angles négatifs ou > 360, cette fonction remet tout dans [0, 360[
+static inline uint16_t wrap_angle(int16_t angle){
+    int16_t normalized = angle % 360;
+    if (normalized < 0) {
+        normalized += 360;
+    }
+    return (uint16_t)normalized;
+}
+
 void display_mask(uint16_t mask){
     // lire la doc du MBI5024 pour comprendre le fonctionnement
     set_OE(1); // on coupe temporairement la sortie (OE actif à 0)
-    shift_mask_bits(mask);
+    preload_mask(mask);
     // envoie l'output
     set_LE(1);
     set_LE(0);
@@ -110,11 +127,6 @@ void display_mask_during_ticks(uint16_t mask, uint16_t time_ticks){
     display_mask(mask); 
     delay_ticks(time_ticks); 
     set_OE(1); // on coupe la sortie après l'affichage
-}
-
-void preload_mask(uint16_t mask){
-    // précharge les bits dans SDI lorsque OE=1
-    shift_mask_bits(mask);
 }
 
 void display_preloaded_mask_for(uint16_t time_ticks){
@@ -155,41 +167,46 @@ void display_mask_at_angle(uint16_t mask, uint32_t angle_deg){
     display_mask_during_ticks(mask, LEDS_BRIGHTNESS_TICKS * ticks_on);
 }
 
-void display_patterns(const pattern_t pattern_dict[]){
-    // attend qu'on soit sur un nouveau tour
+void display_patterns(const pattern_t pattern_dict[], uint16_t pattern_count){
+    if (pattern_count == 0U) {
+        return;
+    }
+
     while (!new_rotation) {}
 
-    // remet ticks à  zéro
-    uint16_t rotation_ticks = get_rotation_ticks();  
+    uint16_t rotation_ticks = get_rotation_ticks();
+    if (rotation_ticks == 0U) {
+        return;
+    }
 
-    // comme avant on veut allumer chaque pattern buffer environ 1deg
     uint16_t ticks_on = rotation_ticks / 360U;
-    // on force à 1 tick pour eviter 0
-    if (ticks_on < 1) ticks_on = 1;
+    if (ticks_on < 1U) {
+        ticks_on = 1U;
+    }
 
-    for (int i = 0; i < PATTERN_DICT_SIZE; ++i) {
-        uint16_t current_angle = pattern_dict[i].angle;
+    for (uint16_t i = 0; i < pattern_count; ++i) {
+        int16_t raw_angle = (int16_t)pgm_read_word(&(pattern_dict[i].angle));
+        uint16_t current_angle = wrap_angle(raw_angle);
+        uint16_t mask = pgm_read_word(&(pattern_dict[i].mask));
 
-        // on calcule à combien de ticks est l'angle qu'on veut afficher 
-        // dans un 32 toujours si jamais 
         uint32_t target32 = ((uint32_t)rotation_ticks * (uint32_t)current_angle) / 360U;
-        // pareil re cast dans un 16 si ca a pas dépassé 
-        uint16_t target = (target32 > 0xFFFF) ? 0xFFFF : (uint16_t)target32;
+        uint16_t target = (target32 > 0xFFFFU) ? 0xFFFFU : (uint16_t)target32;
 
-        // calcul à combien de ticks on devra précharger le buffer
-        uint16_t preload_target = (target > PRELOAD_TICKS) ? (target - (uint16_t)PRELOAD_TICKS) : 0U; 
+        uint16_t preload_target = (target > PRELOAD_TICKS) ? (uint16_t)(target - PRELOAD_TICKS) : 0U;
 
-        // attente jusqu'au préchargement
         delay_until_tick(preload_target);
-        // si on est dans un nouveau tour trop tard on arrête
-        if (new_rotation) break;
-        // on précharge directement le masque
-        preload_mask(pattern_dict[i].mask);
+        if (new_rotation) {
+            break;
+        }
 
-        // attendre l'instant exact de l'angle puis affiche le buffer 
+        preload_mask(mask);
+
         delay_until_tick(target);
-        if (new_rotation) break; // un nouveau tour a démarré
-        display_preloaded_mask_for(ticks_on*LEDS_BRIGHTNESS_TICKS);
+        if (new_rotation) {
+            break;
+        }
+
+        display_preloaded_mask_for((uint16_t)(ticks_on * LEDS_BRIGHTNESS_TICKS));
     }
 }
 
