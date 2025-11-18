@@ -210,3 +210,46 @@ void display_patterns(const pattern_t pattern_dict[], uint16_t pattern_count){
     }
 }
 
+// Affiche un buffer de patterns stocké en RAM (pas en PROGMEM)
+void display_patterns_from_ram(const pattern_t *pattern_dict, uint16_t pattern_count) {
+    if (pattern_count == 0U) {
+        return;
+    }
+
+    while (!new_rotation) {}
+
+    uint16_t rotation_ticks = get_rotation_ticks();
+    if (rotation_ticks == 0U) {
+        return;
+    }
+
+    uint16_t ticks_on = rotation_ticks / 360U;
+    if (ticks_on < 1U) {
+        ticks_on = 1U;
+    }
+
+    for (uint16_t i = 0; i < pattern_count; ++i) {
+        int16_t raw_angle = pattern_dict[i].angle;
+        uint16_t current_angle = wrap_angle(raw_angle);
+        uint16_t mask = pattern_dict[i].mask;
+
+        uint32_t target32 = ((uint32_t)rotation_ticks * (uint32_t)current_angle) / 360U;
+        uint16_t target = (target32 > 0xFFFFU) ? 0xFFFFU : (uint16_t)target32;
+
+        uint16_t preload_target = (target > PRELOAD_TICKS) ? (uint16_t)(target - PRELOAD_TICKS) : 0U;
+
+        delay_until_tick(preload_target);
+        if (new_rotation) {
+            break;
+        }
+
+        preload_mask(mask);
+
+        delay_until_tick(target);
+        if (new_rotation) {
+            break;
+        }
+
+        display_preloaded_mask_for((uint16_t)(ticks_on * LEDS_BRIGHTNESS_TICKS));
+    }
+}

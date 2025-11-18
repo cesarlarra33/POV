@@ -69,4 +69,7 @@ void display_mask_at_angle(uint16_t mask, uint32_t angle_deg);
 /// @param pattern_dict Le dictionnaire de patterns à afficher
 void display_patterns(const pattern_t pattern_dict[], uint16_t pattern_count);
 
+/// @brief Affiche un buffer de patterns stocké en RAM (pas en PROGMEM)
+void display_patterns_from_ram(const pattern_t *pattern_dict, uint16_t pattern_count);
+
 #endif 
