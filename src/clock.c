@@ -46,7 +46,7 @@ void set_clock_time(uint8_t hour, uint8_t minute){
     clock_dirty = 1; 
 }
 
-static void load_clock_base_template(void){
+static void load_clock_base_template(){
     for (int i = 0; i < CLOCK_PATTERN_SIZE; ++i){
         clock_pattern_buffer[i].angle = pgm_read_word(&(clock_base_pattern[i].angle));
         clock_pattern_buffer[i].mask = pgm_read_word(&(clock_base_pattern[i].mask));
