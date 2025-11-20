@@ -2,14 +2,14 @@
 #define UART_H
 
 #include <avr/io.h>
+#include "utils.h"
 
-#define FOSC 13000000UL
 #define BAUD 38400
-#define MYUBRR (FOSC / 16 / BAUD - 1)
+#define MYUBRR (F_CPU / 16 / BAUD - 1)
 
-void USART_Init(unsigned int ubrr);
-void USART_Transmit(char data);
-void USART_PutString(char *str);
-char USART_Receive();
+void uart_init(unsigned int ubrr);
+void uart_transmit(char data);
+void uart_putstring(char *str);
+char uart_receive();
 
 #endif

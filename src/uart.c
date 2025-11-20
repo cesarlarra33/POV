@@ -1,7 +1,7 @@
 #include "uart.h"
 #include <string.h>
 
-void USART_Init(unsigned int ubrr) {
+void uart_init(unsigned int ubrr) {
     UBRR0H = (unsigned char)(ubrr >> 8);
     UBRR0L = (unsigned char)ubrr;
     UCSR0A = 0;
@@ -9,18 +9,18 @@ void USART_Init(unsigned int ubrr) {
     UCSR0C = (1 << USBS0) | (3 << UCSZ00);
 }
 
-void USART_Transmit(char data) {
+void uart_transmit(char data) {
     while (!(UCSR0A & (1 << UDRE0)));
     UDR0 = data;
 }
 
-void USART_PutString(char *str) {
+void uart_putstring(char *str) {
     while (*str) {
-        USART_Transmit(*str++);
+        uart_init(*str++);
     }
 }
 
-char USART_Receive() {
+char uart_receive() {
     while (!(UCSR0A & (1 << RXC0)));
     return UDR0;
 }
