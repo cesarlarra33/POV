@@ -37,6 +37,7 @@ extern pattern_t clock_pattern_buffer[CLOCK_PATTERN_SIZE];
 void init_clock();
 void update_clock();
 void superpose_aiguille(const pattern_t *aiguille_pattern, uint8_t aiguille_length, uint8_t aiguille_thickness, int target_index);
-void start_clock(uint8_t hour, uint8_t minute);
+void start_clock();
+void set_clock_time(uint8_t hour, uint8_t minute); 
 
 #endif

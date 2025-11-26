@@ -127,12 +127,12 @@ void update_clock(){
     superpose_aiguille(second_aiguille, SECOND_AIGUILLE_LENGTH, SECOND_AIGUILLE_THICKNESS, second_index);
 }
 
-void start_clock(uint8_t hour, uint8_t minute){
+void start_clock(){
     init_clock();
-    current_time.hours = hour % 24;
+    /* current_time.hours = hour % 24;
     current_time.minutes = minute % 60;
     current_time.seconds = 0;
-    clock_dirty = 1;
+    clock_dirty = 1; */
     configure_clock_interrupt();
     while(1){
         // on met a jour les variables globales de l'heure ici, pas dans l'ISR

@@ -2,6 +2,8 @@
 #define UART_H
 
 #include <avr/io.h>
+#include <stdio.h>
+#include "clock.h"
 #include "utils.h"
 
 #define BAUD 38400
@@ -12,6 +14,7 @@ extern volatile char uart_received_buffer[UART_BUF_SIZE];
 extern volatile uint8_t uart_msg_ready; 
 extern volatile uint8_t msg_index; 
 
+// pas oublier de commenter ce .h avec les comms tah Doxygen
 void uart_init(unsigned int ubrr);
 void uart_transmit(char data);
 void uart_putstring(char *str);
