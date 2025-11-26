@@ -8,27 +8,16 @@
 
 
 int main(void) {
-    /* char etat = 0; // 0 = éteint, 1 = allumé
-
-    USART_Init(MYUBRR);
+    uart_init(MYUBRR);
     set_all_leds_outputs();
 
     while (1) {
-        // Affiche en continu l'état courant
-        if (etat == 0) {
-            display_mask(0x0000); // LEDs éteintes
-        } else {
-            display_mask(0xFFFF); // LEDs allumées
+        if (uart_msg_ready) {
+            uart_msg_ready = 0;
+            uart_putstring("Message reçu : ");
+            uart_putstring((char*)uart_received_buffer);
+            uart_putstring("\n");
         }
-        // Vérifie s'il y a un message reçu (bloquant)
-        if (USART_Receive()) {
-            etat = !etat; // Inverse l'état à chaque message
-        }
-    } */
-
-    set_all_leds_outputs();
-    set_HALL_as_input(); 
-    start_clock(10,10); 
-
+    }
     return 0;
 }
