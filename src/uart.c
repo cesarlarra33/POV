@@ -22,10 +22,13 @@ void uart_init(unsigned int ubrr) {
     UCSR0C = (1 << USBS0) | (3 << UCSZ00);
 }
 
+/// Interruption liée au chgt du registre RX de l'uart
 ISR(USART_RX_vect) {
+    // recup le msg recu caractère par caractère
     char c = UDR0;
     if (c == '\n' || msg_index >= UART_BUF_SIZE - 1) {
         uart_received_buffer[msg_index] = '\0';
+        // si on arrive à a fin de la string, on met le flag msg ready à 1
         uart_msg_ready = 1;
         msg_index = 0;
     } else {
