@@ -48,26 +48,28 @@ void set_OE(int on_off);
 /// @brief change l'état de LE, le truc pour envoyer le buffer aux leds. 
 void set_LE(int on_off);
 
-/// @brief affiche le buffer, on l'appelle 1 fois et le buffer reste affiché
-/// jusqu'à ce qu'une autre fonction change OE.
-/// @param buffer Le buffer à afficher
-void display_buffer(uint8_t *buffer); 
+/// @brief affiche le motif (masque binaire) envoyé au driver
+/// @param mask Masque 16 bits, 1 = LED allumée
+void display_mask(uint16_t mask);
 
-/// @brief Affiche le buffer pendant us microsecondes ensuite noir.
-/// @param buffer Le buffer à afficher
+/// @brief Affiche le motif pendant us microsecondes ensuite noir
+/// @param mask Masque 16 bits, 1 = LED allumée
 /// @param us Le nombre de microsecondes à afficher
-void display_buffer_during_us(uint8_t *buffer, uint16_t us); 
+void display_mask_during_us(uint16_t mask, uint16_t us);
 
-/// @brief Affiche le buffer à l'angle souhaité angle_deg
-/// appeler comme ca : while(1){ display_buffer_at_angle(buf, ANGLE); }
+/// @brief Affiche le motif à l'angle souhaité angle_deg
+/// appeler comme ca : while(1){ display_mask_at_angle(mask, ANGLE); }
 /// cette fonction gère le timing toute seule
-/// @param buffer Le buffer à afficher
+/// @param mask Masque 16 bits, 1 = LED allumée
 /// @param angle_deg L'angle à afficher
-void display_buffer_at_angle(uint8_t *buffer, uint32_t angle_deg);
+void display_mask_at_angle(uint16_t mask, uint32_t angle_deg);
 
 /// @brief affiche chaque buffer du disctionnaire pattern à son angle associé. 
 /// cette fonction aussi gère le timing toute seule
 /// @param pattern_dict Le dictionnaire de patterns à afficher
-void display_patterns(pattern_t pattern_dict[], uint8_t pattern_count);
+void display_patterns(const pattern_t pattern_dict[], uint16_t pattern_count);
+
+/// @brief Affiche un buffer de patterns stocké en RAM (pas en PROGMEM)
+void display_patterns_from_ram(const pattern_t *pattern_dict, uint16_t pattern_count);
 
 #endif 

@@ -1,6 +1,4 @@
 #include "hall_sensor.h"
-#include <avr/io.h>
-#include <avr/interrupt.h>
 
 // attribution des 2 variables qui sont extern dans l .h, donc plus extern mais toujours volatile pour dire au compilateur
 // qu'elles peuvent changer en dehors du flux normal du programme
@@ -9,6 +7,7 @@ volatile uint16_t rotation_time = 0;
 volatile uint8_t new_rotation = 0;
 
 ISR(HALL_INT) {
+    
     // Recup la valeur du Time Counter Timer, la valeur de la clock du processeur sur un int de 16bits 
     rotation_time = TCNT1; 
     // remet le compteur à zéro 
@@ -16,7 +15,7 @@ ISR(HALL_INT) {
     new_rotation = 1;    
     // décomenter pour verifie que ca fonctionne si on a bien une ligne dasn l'axe du capteur. 
     //delay_us_ticks(50000); 
-    //display_buffer_during_us((uint8_t[]){1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}, 10);
+    //display_mask_during_us(0xFFFF, 10);
 }
 
 void configure_HALL_interrupt(){
