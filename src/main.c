@@ -9,7 +9,7 @@ int main(void) {
     
     // Boucle principale : afficher les patterns en fonction de l'angle
     while(1) {
-        display_patterns(pattern_dict);
+        display_patterns(pattern_dict, 16);
     }
 
     return 0; // jamais atteint

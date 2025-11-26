@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "pattern.h"
+
 pattern_t pattern_dict[] = {
     //12 
     /*
@@ -9,7 +10,7 @@ pattern_t pattern_dict[] = {
     { .angle = 9, .buffer = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } }, 
     { .angle = 10, .buffer = {0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } }, 
     { .angle = 13, .buffer = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } },
-     */
+     
     // 11 
     { .angle = 0,  .buffer = {1,0,1,0, 1,0,1,0, 0,0,0,0, 0,0,0,0} },
     { .angle = 3,  .buffer = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0} },
@@ -17,7 +18,7 @@ pattern_t pattern_dict[] = {
     { .angle = 9,  .buffer = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0} }, 
     { .angle = 10, .buffer = {1,0,1,0, 1,0,1,0, 0,0,0,0, 0,0,0,0} }, 
     { .angle = 13, .buffer = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0} }
-
-
+    */
+    { {0x40, 0x00}, 0, 90 } 
 };
 const int PATTERN_DICT_SIZE = sizeof(pattern_dict) / sizeof(pattern_dict[0]);

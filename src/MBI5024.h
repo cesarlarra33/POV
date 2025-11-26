@@ -68,6 +68,6 @@ void display_buffer_at_angle(uint8_t *buffer, uint32_t angle_deg);
 /// @brief affiche chaque buffer du disctionnaire pattern à son angle associé. 
 /// cette fonction aussi gère le timing toute seule
 /// @param pattern_dict Le dictionnaire de patterns à afficher
-void display_patterns(pattern_t pattern_dict[]); 
+void display_patterns(pattern_t pattern_dict[], uint8_t pattern_count);
 
 #endif 

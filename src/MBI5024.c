@@ -77,18 +77,16 @@ void set_LE(int up_down){
 }
 
 void display_buffer(uint8_t *buffer){
-    // lire la doc du MBI5024 pour comprendre le fonctionnement
-    set_OE(1); // on coupe temporairement la sortie (OE actif à 0)
+    set_OE(1);
     for(int i = 0; i < NB_LEDS; i++){
-        // on met un coup de clock pour valider la valeur de SDI
-        set_SDI(buffer[i]);
-        CLOCK_UP(); 
-        CLOCK_DOWN(); 
+        int bit_value = (buffer[i/8] >> (7 - (i%8))) & 1; // bit par bit
+        set_SDI(bit_value);
+        CLOCK_UP();
+        CLOCK_DOWN();
     }
-    // envoie l'output
     set_LE(1);
     set_LE(0);
-    set_OE(0); 
+    set_OE(0);
 }
 
 void display_buffer_during_us(uint8_t *buffer, uint16_t delay_us){
@@ -156,40 +154,27 @@ void display_buffer_at_angle(uint8_t *buffer, uint32_t angle_deg){
     display_buffer_during_ticks(buffer, LEDS_BRIGHTNESS_TICKS * ticks_on);
 }
 
-void display_patterns(pattern_t pattern_dict[]){
-    // attend qu'on soit sur un nouveau tour
+void display_patterns(pattern_t pattern_dict[], uint8_t pattern_count) {
+    // Attend un nouveau tour complet
     while (!new_rotation) {}
 
-    // remet ticks à  zéro
-    uint16_t rotation_ticks = get_rotation_ticks();  
+    uint16_t rotation_ticks = get_rotation_ticks();
 
-    // comme avant on veut allumer chaque pattern buffer environ 1deg
-    uint16_t ticks_on = rotation_ticks / 360U;
-    // on force à 1 tick pour eviter 0
-    if (ticks_on < 1) ticks_on = 1;
+    for (int i = 0; i < pattern_count; i++) {
+        // Calcul des ticks correspondant à l'angle de début et de fin
+        uint32_t start_ticks32 = ((uint32_t)rotation_ticks * (uint32_t)pattern_dict[i].angle_start) / 360U;
+        uint32_t end_ticks32   = ((uint32_t)rotation_ticks * (uint32_t)pattern_dict[i].angle_end)   / 360U;
 
-    for (int i = 0; i < PATTERN_DICT_SIZE; ++i) {
-        uint16_t current_angle = pattern_dict[i].angle;
+        uint16_t start_ticks = (start_ticks32 > 0xFFFF) ? 0xFFFF : (uint16_t)start_ticks32;
+        uint16_t end_ticks   = (end_ticks32   > 0xFFFF) ? 0xFFFF : (uint16_t)end_ticks32;
 
-        // on calcule à combien de ticks est l'angle qu'on veut afficher 
-        // dans un 32 toujours si jamais 
-        uint32_t target32 = ((uint32_t)rotation_ticks * (uint32_t)current_angle) / 360U;
-        // pareil re cast dans un 16 si ca a pas dépassé 
-        uint16_t target = (target32 > 0xFFFF) ? 0xFFFF : (uint16_t)target32;
-
-        // calcul à combien de ticks on devra précharger le buffer
-        uint16_t preload_target = target - (uint16_t)PRELOAD_TICKS; 
-
-        // attente jusqu'au préchargement
-        delay_until_tick(preload_target);
-        // si on est dans un nouveau tour trop tard on arrête
+        // On attend l'angle de début
+        delay_until_tick(start_ticks);
         if (new_rotation) break;
-        // on précharge le buffer
-        preload_buffer(pattern_dict[i].buffer);
 
-        // attendre l'instant exact de l'angle puis affiche le buffer 
-        delay_until_tick(target);
-        if (new_rotation) break; // un nouveau tour a démarré
-        display_preloaded_buffer_for(ticks_on*LEDS_BRIGHTNESS_TICKS);
+        // Affiche le buffer jusqu'à l'angle de fin
+        uint16_t duration_ticks = end_ticks - start_ticks;
+        if (duration_ticks == 0) duration_ticks = 1;
+        display_buffer_during_ticks(pattern_dict[i].buffer, duration_ticks);
     }
 }
