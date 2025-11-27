@@ -115,8 +115,8 @@ void superpose_aiguille(const pattern_t *aiguille_pattern, uint8_t aiguille_leng
     }
 }
 
-// met à jour l'affichage des aiguilles en fonction de l'heure courante
-void update_clock(){
+// fonction de mise à jour de l'affichage de la clock 0 a aiguilles 
+void update_analog_clock(){
     load_clock_base_template();
 
     // index minute / hour, sec on inverse car les angles augmentent dans le sens antihoraire 
@@ -132,6 +132,28 @@ void update_clock(){
     superpose_aiguille(hour_aiguille, HOUR_AIGUILLE_LENGTH, HOUR_AIGUILLE_THICKNESS, hour_index);
     superpose_aiguille(second_aiguille, SECOND_AIGUILLE_LENGTH, SECOND_AIGUILLE_THICKNESS, second_index);
 }
+
+
+volatile int current_clock_style = 0; 
+
+// met à jour l'affichage des aiguilles en fonction de l'heure courante
+void update_clock(int clock_style){
+    switch (clock_style)
+    {
+    case ANALOG:
+        update_analog_clock(); 
+        break;
+
+    case ROUNDED_D:
+        update_rounded_d_clock(); 
+        break;
+    
+    default:
+        break;
+    }
+}
+
+
 
 void start_clock(){
     init_clock();
@@ -161,7 +183,7 @@ void start_clock(){
             // si la clock est dirty (c.a.d, doit être updatée), on le fait 
             if (clock_dirty){
                 clock_dirty = 0;
-                update_clock();
+                update_clock(current_clock_style);
             }
 
             display_patterns_from_ram(clock_pattern_buffer, CLOCK_PATTERN_SIZE);

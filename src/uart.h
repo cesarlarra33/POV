@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include "clock.h"
 #include "utils.h"
+#include <string.h>
+#include <avr/interrupt.h>
 
 // la baudrate de l'uart sur atmega328p 
 #define BAUD 38400 

@@ -1,7 +1,5 @@
 #include "uart.h"
-#include <string.h>
 
-#include <avr/interrupt.h>
 
 #define UART_BUF_SIZE 64
 volatile char uart_received_buffer[UART_BUF_SIZE];
@@ -25,21 +23,44 @@ void uart_init(unsigned int ubrr) {
 
 // handler de commande, appelé dans l'interruption à chaque fois que la commande est complête. 
 void handle_message(char *uart_received_buffer){
-    // on renvoie le message pour vérifier que ca fonctionnbien (a commenter plus tard)
+    // on renvoie le message pour vérifier que ca fonctionne bien (à commenter plus tard)
     uart_putstring("Message recu : ");
     uart_putstring((char*)uart_received_buffer);
-    // si ca commence par h alors c'est le réglage de l'heure
-    // à remplacer par un switch case peut être. 
-    if (uart_received_buffer[0] == 'h') {
-        
-        int hour = 0, minute = 0;
-        // Format attendu : hHH:MM
-        if (sscanf(uart_received_buffer + 1, "%2d:%2d", &hour, &minute) == 2) {
-            set_clock_time(hour, minute);
-            uart_putstring("Heure reglee\n");
-        } else {
-            uart_putstring("Format invalide\n");
+   
+    switch (uart_received_buffer[0])
+    {
+        //si la commande commence par h, alors c'est celle pour règler l'heure et on la règle en fonction
+        case 'h':
+        {
+            int hour = 0, minute = 0;
+            // Format attendu : hHH:MM
+            if (sscanf(uart_received_buffer + 1, "%2d:%2d", &hour, &minute) == 2) {
+                set_clock_time(hour, minute);
+                uart_putstring("Heure reglee\n");
+            } else {
+                uart_putstring("Format invalide\n");
+            }
+            break;
         }
+
+        case 'a':
+        {
+            current_clock_style = ANALOG; 
+            uart_putstring("Affichage de l'horloge ANALOG\n"); 
+            break; 
+        }
+        
+        case 'r':
+        {
+            current_clock_style = ROUNDED_D; 
+            uart_putstring("Affichage de l'horloge ROUNDED_DIGITAL"); 
+            break; 
+        }
+
+        default:
+            // si aucune commande n'est reconnue on affiche l'usage
+            uart_putstring("Commande non recconue, usage : \n- Pour regler l'h : hHH:MM\n- Pour changer de cadran a (analog), r (rounded-digital), d (digital)\n");
+            break;
     }
 }
 
