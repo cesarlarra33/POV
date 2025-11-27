@@ -78,6 +78,8 @@ static int find_index_by_angle_nearest(const pattern_t *table, int size, int tar
 }
 
 void superpose_aiguille(const pattern_t *aiguille_pattern, uint8_t aiguille_length, uint8_t aiguille_thickness, int base_index){
+    // verif de la validité des paramêtres jsp si c'est utile, on pourra les retirer
+    // si on réduire le glitch à chaque seconde qui passe. 
     if (aiguille_pattern == NULL || aiguille_thickness == 0){
         return;
     }
@@ -88,18 +90,22 @@ void superpose_aiguille(const pattern_t *aiguille_pattern, uint8_t aiguille_leng
         aiguille_length = NB_LEDS;
     }
 
+    // on prépare un masque plein de 16 bits à 1
     uint16_t length_mask = 0xFFFFU;
+    // qu'on va tronquer en fonction de la taille de l'aiguille
     if (aiguille_length < NB_LEDS){
         uint8_t shift = (uint8_t)(NB_LEDS - aiguille_length);
         length_mask = (uint16_t)((0xFFFFU << shift) & 0xFFFFU);
     }
 
+    // Centrage de l'aiguille sur base_index
+    // Centrage géométrique de l'aiguille sur base_index
+    int center = (aiguille_thickness - 1) / 2;
     for (uint8_t t = 0; t < aiguille_thickness; ++t){
-        int16_t rel_angle = (int16_t)pgm_read_word(&(aiguille_pattern[t].angle));
         uint16_t raw_mask = pgm_read_word(&(aiguille_pattern[t].mask));
         uint16_t mask = raw_mask & length_mask;
 
-        int target_index = base_index + (int)rel_angle;
+        int target_index = base_index + ((int)t - center); // centre sur base_index
         while (target_index < 0){
             target_index += CLOCK_PATTERN_SIZE;
         }
