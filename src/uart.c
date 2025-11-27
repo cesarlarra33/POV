@@ -26,7 +26,7 @@ void uart_init(unsigned int ubrr) {
 // handler de commande, appelé dans l'interruption à chaque fois que la commande est complête. 
 void handle_message(char *uart_received_buffer){
     // on renvoie le message pour vérifier que ca fonctionnbien (a commenter plus tard)
-    uart_putstring("Message reçu : ");
+    uart_putstring("Message recu : ");
     uart_putstring((char*)uart_received_buffer);
     // si ca commence par h alors c'est le réglage de l'heure
     // à remplacer par un switch case peut être. 
@@ -36,7 +36,7 @@ void handle_message(char *uart_received_buffer){
         // Format attendu : hHH:MM
         if (sscanf(uart_received_buffer + 1, "%2d:%2d", &hour, &minute) == 2) {
             set_clock_time(hour, minute);
-            uart_putstring("Heure réglée\n");
+            uart_putstring("Heure reglee\n");
         } else {
             uart_putstring("Format invalide\n");
         }
@@ -58,8 +58,6 @@ ISR(USART_RX_vect) {
         uart_received_buffer[msg_index++] = c;
     }
 }
-
-
 
 
 // fonctions de bouchra mais on se sert pkus de uart_receive
