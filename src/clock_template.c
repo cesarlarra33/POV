@@ -1,26 +1,26 @@
 #include "clock_template.h"
 
-const pattern_t hour_aiguille[] PROGMEM = {
+const pattern_t hour_aiguille[] PROGMEM = { // <=
     { .angle = -2, .mask = MASK16(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0) },
     { .angle = -1, .mask = MASK16(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1) },
-    { .angle = 0U,            .mask = MASK16(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1) },
-    { .angle = 1U,            .mask = MASK16(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1) },
-    { .angle = 2U,            .mask = MASK16(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0) },
+    { .angle = 0U, .mask = MASK16(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1) },
+    { .angle = 2U, .mask = MASK16(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0) },
+    { .angle = 1U, .mask = MASK16(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1) },
 };
 
-const pattern_t min_aiguille[] PROGMEM = {
+const pattern_t min_aiguille[] PROGMEM = {  // <---
     { .angle = -1, .mask = MASK16(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0) },
-    { .angle = 0U,            .mask = MASK16(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1) },
-    { .angle = 1U,            .mask = MASK16(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0) },
+    { .angle = 0U, .mask = MASK16(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1) },
+    { .angle = 1U, .mask = MASK16(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0) },
 };
 
-const pattern_t second_aiguille[] PROGMEM = {
+const pattern_t second_aiguille[] PROGMEM = {   // <---------
     { .angle = -1, .mask = MASK16(0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) },
-    { .angle = 0U,            .mask = MASK16(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1) },
-    { .angle = 1U,            .mask = MASK16(0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) }
+    { .angle = 0U, .mask = MASK16(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1) },
+    { .angle = 1U, .mask = MASK16(0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) }
 };
 
-const pattern_t clock_base_pattern[] PROGMEM = {
+const pattern_t analog_clock_base_pattern[CLOCK_PATTERN_SIZE] PROGMEM = {
     // un du 12 
     { .angle =   0U, .mask = MASK16(0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0) },
     { .angle =   3U, .mask = MASK16(0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0) },
@@ -137,12 +137,12 @@ const pattern_t clock_base_pattern[] PROGMEM = {
     { .angle = 357U, .mask = MASK16(0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0) },
 };
 
-const uint8_t HOUR_AIGUILLE_LENGTH = 6U;
+const uint8_t HOUR_AIGUILLE_LENGTH = 6;
 const uint8_t HOUR_AIGUILLE_THICKNESS = (uint8_t)(sizeof(hour_aiguille) / sizeof(hour_aiguille[0]));
-const uint8_t MINUTE_AIGUILLE_LENGTH = 7U;
+const uint8_t MINUTE_AIGUILLE_LENGTH = 7;
 const uint8_t MINUTE_AIGUILLE_THICKNESS = (uint8_t)(sizeof(min_aiguille) / sizeof(min_aiguille[0]));
-const uint8_t SECOND_AIGUILLE_LENGTH = 16U;
+const uint8_t SECOND_AIGUILLE_LENGTH = 16;
 const uint8_t SECOND_AIGUILLE_THICKNESS = (uint8_t)(sizeof(second_aiguille) / sizeof(second_aiguille[0]));
 
-const int CLOCK_PATTERN_SIZE = (int)(sizeof(clock_base_pattern) / sizeof(clock_base_pattern[0]));
+
 

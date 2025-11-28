@@ -1,4 +1,5 @@
-#include "uart.h"
+#include "clock_rounded.h"
+#include <stdio.h>
 
 
 #define UART_BUF_SIZE 64
@@ -18,6 +19,25 @@ void uart_init(unsigned int ubrr) {
     UCSR0B = (1 << RXEN0) | (1 << TXEN0);
     uart_enable_rx_interrupt();
     UCSR0C = (1 << USBS0) | (3 << UCSZ00);
+}
+
+
+
+// fonctions de bouchra mais on se sert pkus de uart_receive
+void uart_transmit(char data) {
+    while (!(UCSR0A & (1 << UDRE0)));
+    UDR0 = data;
+}
+
+void uart_putstring(char *str) {
+    while (*str) {
+        uart_transmit(*str++);
+    }
+}
+
+char uart_receive() {
+    while (!(UCSR0A & (1 << RXC0)));
+    return UDR0;
 }
 
 
@@ -45,16 +65,20 @@ void handle_message(char *uart_received_buffer){
 
         case 'a':
         {
-            current_clock_style = ANALOG; 
-            uart_putstring("Affichage de l'horloge ANALOG\n"); 
-            break; 
+            current_clock_style = ANALOG;
+            uart_putstring("Affichage de l'horloge ANALOG\n");
+            load_template(analog_clock_base_pattern);
+            current_pattern = display_pattern_buffer;
+            break;
         }
-        
+
         case 'r':
         {
-            current_clock_style = ROUNDED_D; 
-            uart_putstring("Affichage de l'horloge ROUNDED_DIGITAL"); 
-            break; 
+            current_clock_style = ROUNDED_D;
+            uart_putstring("Affichage de l'horloge ROUNDED_DIGITAL\n");
+            load_template(rounded_clock_base_pattern);
+            current_pattern = display_pattern_buffer;
+            break;
         }
 
         default:
@@ -80,20 +104,3 @@ ISR(USART_RX_vect) {
     }
 }
 
-
-// fonctions de bouchra mais on se sert pkus de uart_receive
-void uart_transmit(char data) {
-    while (!(UCSR0A & (1 << UDRE0)));
-    UDR0 = data;
-}
-
-void uart_putstring(char *str) {
-    while (*str) {
-        uart_transmit(*str++);
-    }
-}
-
-char uart_receive() {
-    while (!(UCSR0A & (1 << RXC0)));
-    return UDR0;
-}
