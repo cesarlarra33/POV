@@ -228,7 +228,9 @@ void display_patterns_from_ram(const pattern_t *pattern_dict, uint16_t pattern_c
         uint16_t preload_target = (target > PRELOAD_TICKS) ? (uint16_t)(target - PRELOAD_TICKS) : 0U;
 
         delay_until_tick(preload_target);
-        
+        if (new_rotation) {
+            break;
+        }
 
         preload_mask(mask);
 
