@@ -2,7 +2,7 @@
 
 #include "MBI5024.h"
 
-static inline void preload_mask(uint16_t mask);
+
 static inline uint16_t wrap_angle(int16_t angle);
 
 void set_CLOCK_as_output(){
@@ -82,7 +82,7 @@ void set_LE(int up_down){
 }
 
 
-static inline void preload_mask(uint16_t mask){
+void preload_mask(uint16_t mask){
     for (uint8_t i = 0; i < NB_LEDS; ++i) {
         set_SDI((mask >> i) & 0x1U);
         CLOCK_UP();

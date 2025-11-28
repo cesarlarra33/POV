@@ -1,3 +1,4 @@
+/*
 #ifndef PATTERN_H
 #define PATTERN_H
 
@@ -24,8 +25,9 @@ typedef struct {
         ((uint16_t)(!!(b14)) << 14) | ((uint16_t)(!!(b15)) << 15))
 #endif
 
-#define PATTERN_DICT_SIZE 7
+#define PATTERN_DICT_SIZE 10
 
 extern const pattern_t pattern_dict[PATTERN_DICT_SIZE] PROGMEM;
 
 #endif
+*/

@@ -1,3 +1,4 @@
+
 // Genere avec Rotation 0
 #include "clock_template.h"
 

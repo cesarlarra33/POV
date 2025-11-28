@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "hall_sensor.h"
 #include "pattern.h"
+#include "heart_shape.h"
 
 #define CLOCK PB5
 #define SDI PB3
@@ -18,6 +19,9 @@
 
 /// @brief configure l'horloge comme une sortie
 void set_CLOCK_as_output(); 
+
+void preload_mask(uint16_t mask);
+void display_preloaded_mask_for(uint16_t time_ticks);
 
 /// @brief configure SDI (serial data input) comme une sortie
 void set_SDI_as_output(); 

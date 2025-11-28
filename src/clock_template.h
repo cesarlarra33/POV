@@ -3,6 +3,7 @@
 
 #include <avr/pgmspace.h>
 #include "pattern.h"
+#include "heart_shape.h"
 
 // macro qui convertit 16 bits individuels en un masque 16 bits
 // se fait a la compilation donc coute pas + cher à l'exec 
