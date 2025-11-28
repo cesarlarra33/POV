@@ -212,21 +212,10 @@ void display_patterns(const pattern_t pattern_dict[], uint16_t pattern_count){
 
 // Affiche un buffer de patterns stocké en RAM (pas en PROGMEM)
 void display_patterns_from_ram(const pattern_t *pattern_dict, uint16_t pattern_count) {
-    if (pattern_count == 0U) {
-        return;
-    }
-
-    while (!new_rotation) {}
-
     uint16_t rotation_ticks = get_rotation_ticks();
-    if (rotation_ticks == 0U) {
-        return;
-    }
+    
 
     uint16_t ticks_on = rotation_ticks / 360U;
-    if (ticks_on < 1U) {
-        ticks_on = 1U;
-    }
 
     for (uint16_t i = 0; i < pattern_count; ++i) {
         int16_t raw_angle = pattern_dict[i].angle;
@@ -239,9 +228,7 @@ void display_patterns_from_ram(const pattern_t *pattern_dict, uint16_t pattern_c
         uint16_t preload_target = (target > PRELOAD_TICKS) ? (uint16_t)(target - PRELOAD_TICKS) : 0U;
 
         delay_until_tick(preload_target);
-        if (new_rotation) {
-            break;
-        }
+        
 
         preload_mask(mask);
 
