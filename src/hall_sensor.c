@@ -7,7 +7,6 @@ volatile uint16_t rotation_time = 0;
 volatile uint8_t new_rotation = 0;
 
 ISR(HALL_INT) {
-    
     // Recup la valeur du Time Counter Timer, la valeur de la clock du processeur sur un int de 16bits 
     rotation_time = TCNT1; 
     // remet le compteur à zéro 

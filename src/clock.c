@@ -1,16 +1,23 @@
 #include <avr/io.h>
 #include "clock.h"
+#include "clock_template.h"
 #include <stddef.h>
+#include "clock_rounded.h"
 
 
 volatile time_t current_time = {0, 0, 0};
 volatile uint8_t second_elapsed = 0;
 volatile uint8_t clock_dirty = 0;
-pattern_t clock_pattern_buffer[CLOCK_PATTERN_SIZE];
+pattern_t display_pattern_buffer[CLOCK_PATTERN_SIZE];
 
+
+// Interruption sur l'overflow du timer2
 ISR(CLOCK_INT){
+    // 
     static uint32_t cycle_acc = 0;
-    cycle_acc += TIMER2_OVF_DEN;
+    // on accumule les cycles à chaque overflow
+    cycle_acc += CYCLE_PAR_OVF;
+    // si on a accumulé assez de cycles pour faire une seconde on la compte 
     if (cycle_acc >= F_CPU){
         cycle_acc -= F_CPU;
         second_elapsed = 1;
@@ -46,20 +53,22 @@ void set_clock_time(uint8_t hour, uint8_t minute){
     clock_dirty = 1; 
 }
 
-static void load_clock_base_template(){
-    for (int i = 0; i < CLOCK_PATTERN_SIZE; ++i){
-        clock_pattern_buffer[i].angle = pgm_read_word(&(clock_base_pattern[i].angle));
-        clock_pattern_buffer[i].mask = pgm_read_word(&(clock_base_pattern[i].mask));
+
+void load_template(const pattern_t *template_progmem) {
+    for (int i = 0; i < CLOCK_PATTERN_SIZE; ++i) {
+        //pgm read word lit un mot en PROGMEM à l'adresse donnée
+        display_pattern_buffer[i].angle = pgm_read_word(&(template_progmem[i].angle));
+        display_pattern_buffer[i].mask = pgm_read_word(&(template_progmem[i].mask));
     }
 }
 
 void init_clock(){
-    load_clock_base_template();
+    load_template(analog_clock_base_pattern);
 }
 
 // renvoie l'index du pattern dont l'angle est le plus proche de target_angle (0..359)
 // va servir à superposer de manièren exacte les patterns des aiguilles sur la base de l'horloge
-static int find_index_by_angle_nearest(const pattern_t *table, int size, int target_angle){
+int find_index_by_angle_nearest(const pattern_t *table, int size, int target_angle){
     int best_i = 0;
     int best_diff = 361;
     for (int i = 0; i < size; ++i){
@@ -78,6 +87,8 @@ static int find_index_by_angle_nearest(const pattern_t *table, int size, int tar
 }
 
 void superpose_aiguille(const pattern_t *aiguille_pattern, uint8_t aiguille_length, uint8_t aiguille_thickness, int base_index){
+    // verif de la validité des paramêtres au cas où, on pourra les retirer
+    // si on réduire le glitch à chaque seconde qui passe. 
     if (aiguille_pattern == NULL || aiguille_thickness == 0){
         return;
     }
@@ -88,44 +99,71 @@ void superpose_aiguille(const pattern_t *aiguille_pattern, uint8_t aiguille_leng
         aiguille_length = NB_LEDS;
     }
 
+    // on prépare un masque plein de 16 bits à 1
     uint16_t length_mask = 0xFFFFU;
+    // qu'on va tronquer en fonction de la taille de l'aiguille
     if (aiguille_length < NB_LEDS){
         uint8_t shift = (uint8_t)(NB_LEDS - aiguille_length);
         length_mask = (uint16_t)((0xFFFFU << shift) & 0xFFFFU);
     }
 
+    // Centrage géométrique de l'aiguille sur base_index
+    int center = (aiguille_thickness - 1) / 2;
     for (uint8_t t = 0; t < aiguille_thickness; ++t){
-        int16_t rel_angle = (int16_t)pgm_read_word(&(aiguille_pattern[t].angle));
         uint16_t raw_mask = pgm_read_word(&(aiguille_pattern[t].mask));
         uint16_t mask = raw_mask & length_mask;
 
-        int target_index = base_index + (int)rel_angle;
+        int target_index = base_index + ((int)t - center); // centre sur base_index
+        // si jamais tareget depasse les valaeurs limites on wrappe
         while (target_index < 0){
             target_index += CLOCK_PATTERN_SIZE;
         }
         target_index %= CLOCK_PATTERN_SIZE;
-
-        clock_pattern_buffer[target_index].mask |= mask;
+        
+        // Superpose le mask dans le buffer d'affichage
+        display_pattern_buffer[target_index].mask |= mask;
     }
 }
 
-// met à jour l'affichage des aiguilles en fonction de l'heure courante
-void update_clock(){
-    load_clock_base_template();
+// fonction de mise à jour de l'affichage de la clock 0 a aiguilles 
+void update_analog_clock(){
+    load_template(analog_clock_base_pattern);
 
     // index minute / hour, sec on inverse car les angles augmentent dans le sens antihoraire 
     int minute_angle = 360 - ((current_time.minutes % 60) * 6);
     int hour_angle   = 360 - (((current_time.hours % 12) * 60 + current_time.minutes) / 2);
     int second_angle = 360 - ((current_time.seconds % 60) * 6);
 
-    int minute_index = find_index_by_angle_nearest(clock_pattern_buffer, CLOCK_PATTERN_SIZE, minute_angle);
-    int hour_index = find_index_by_angle_nearest(clock_pattern_buffer, CLOCK_PATTERN_SIZE, hour_angle);
-    int second_index = find_index_by_angle_nearest(clock_pattern_buffer, CLOCK_PATTERN_SIZE, second_angle);
+    int minute_index = find_index_by_angle_nearest(display_pattern_buffer, CLOCK_PATTERN_SIZE, minute_angle);
+    int hour_index = find_index_by_angle_nearest(display_pattern_buffer, CLOCK_PATTERN_SIZE, hour_angle);
+    int second_index = find_index_by_angle_nearest(display_pattern_buffer, CLOCK_PATTERN_SIZE, second_angle);
 
     superpose_aiguille(min_aiguille, MINUTE_AIGUILLE_LENGTH, MINUTE_AIGUILLE_THICKNESS, minute_index);
     superpose_aiguille(hour_aiguille, HOUR_AIGUILLE_LENGTH, HOUR_AIGUILLE_THICKNESS, hour_index);
     superpose_aiguille(second_aiguille, SECOND_AIGUILLE_LENGTH, SECOND_AIGUILLE_THICKNESS, second_index);
 }
+
+// on démarre avec la clock analog
+volatile int current_clock_style = 0; 
+
+// met à jour l'affichage des aiguilles en fonction de l'heure courante
+void update_clock(int clock_style){
+    switch (clock_style)
+    {
+    case ANALOG:
+        update_analog_clock(); 
+        break;
+
+    case ROUNDED_D:
+        update_rounded_d_clock(); 
+        break;
+    
+    default:
+        break;
+    }
+}
+
+volatile pattern_t *current_pattern = display_pattern_buffer; 
 
 void start_clock(){
     init_clock();
@@ -155,10 +193,11 @@ void start_clock(){
             // si la clock est dirty (c.a.d, doit être updatée), on le fait 
             if (clock_dirty){
                 clock_dirty = 0;
-                update_clock();
+                // on update la clock en fonction du style courant
+                update_clock(current_clock_style);
             }
-
-            display_patterns_from_ram(clock_pattern_buffer, CLOCK_PATTERN_SIZE);
+            // on affiche le pattern courant
+            display_patterns_from_ram((const pattern_t *)current_pattern, CLOCK_PATTERN_SIZE);
         }
 }
     

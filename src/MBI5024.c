@@ -2,7 +2,7 @@
 
 #include "MBI5024.h"
 
-
+static inline void preload_mask(uint16_t mask);
 static inline uint16_t wrap_angle(int16_t angle);
 
 void set_CLOCK_as_output(){
@@ -82,7 +82,7 @@ void set_LE(int up_down){
 }
 
 
-void preload_mask(uint16_t mask){
+static inline void preload_mask(uint16_t mask){
     for (uint8_t i = 0; i < NB_LEDS; ++i) {
         set_SDI((mask >> i) & 0x1U);
         CLOCK_UP();
@@ -212,21 +212,10 @@ void display_patterns(const pattern_t pattern_dict[], uint16_t pattern_count){
 
 // Affiche un buffer de patterns stocké en RAM (pas en PROGMEM)
 void display_patterns_from_ram(const pattern_t *pattern_dict, uint16_t pattern_count) {
-    if (pattern_count == 0U) {
-        return;
-    }
-
-    while (!new_rotation) {}
-
     uint16_t rotation_ticks = get_rotation_ticks();
-    if (rotation_ticks == 0U) {
-        return;
-    }
+    
 
     uint16_t ticks_on = rotation_ticks / 360U;
-    if (ticks_on < 1U) {
-        ticks_on = 1U;
-    }
 
     for (uint16_t i = 0; i < pattern_count; ++i) {
         int16_t raw_angle = pattern_dict[i].angle;
