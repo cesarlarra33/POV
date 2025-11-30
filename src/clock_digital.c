@@ -3,8 +3,6 @@
 
 // on initialise la matrice comme 32 lignes de 32 '0'
 const uint8_t cartesian_pixel_matrix[MATRIX_SIZE][MATRIX_SIZE] PROGMEM = { {0} };
-// matrice temporaire RAM pour l'affichage dynamique
-uint8_t cartesian_pixel_matrix_ram[MATRIX_SIZE][MATRIX_SIZE] = { {0} };
 
 const uint8_t digit_0[CARTESIAN_DIGIT_HEIGHT][CARTESIAN_DIGIT_WIDTH] PROGMEM = {
     {0,0,1,1,1,1,1,1,0,0},
@@ -178,7 +176,7 @@ const cartesian_point_t min_units_pos = {.x = 2, .y = -2};
 
 // pattern_t de l'affichage digital courant dans lequel on viendra coller la conversion cartésienne / polaire 
 // de la matrice de pixels, elle en PROGMEM
-volatile pattern_t digital_clock_pattern[THETA_RESOLUTION] = {0};
+pattern_t digital_clock_pattern[THETA_RESOLUTION] = {0};
 
 void cartesian_copy_digit_on_matrix(
     uint8_t dest_matrix[MATRIX_SIZE][MATRIX_SIZE], // dest_matrix : matrice globale 32x32
@@ -196,6 +194,27 @@ void cartesian_copy_digit_on_matrix(
                 dest_matrix[x][y] = pgm_read_byte(&(digit_matrix[dy][dx]));
             }
         }
+    }
+}
+
+// Conversion directe d'un digit cartésien (PROGMEM) vers pattern_t polaire
+void convert_digit_cartesian_to_polar_pattern(const uint8_t digit_matrix[CARTESIAN_DIGIT_HEIGHT][CARTESIAN_DIGIT_WIDTH], cartesian_point_t pos, pattern_t *polar_buffer) {
+    uint8_t angle_step = 360 / THETA_RESOLUTION;
+    for (int i = 0; i < THETA_RESOLUTION; i++) {
+        uint16_t angle = i * angle_step;
+        polar_buffer[i].angle = angle;
+        uint16_t mask = 0;
+        double theta = angle * M_PI / 180.0;
+        for (int r = 0; r < NB_LEDS; r++) {
+            int x = pos.x + (int)(r * cos(theta));
+            int y = pos.y - (int)(r * sin(theta));
+            if (x >= 0 && x < MATRIX_SIZE && y >= 0 && y < MATRIX_SIZE) {
+                if (pgm_read_byte(&(digit_matrix[y][x-pos.x]))) {
+                    mask |= (1 << r);
+                }
+            }
+        }
+        polar_buffer[i].mask = mask;
     }
 }
 
@@ -233,24 +252,18 @@ void cartesian_matrix_to_polar_pattern(){
 
 
 void update_digital_clock() {
-    // 1. Efface la matrice RAM
-    for (int x = 0; x < MATRIX_SIZE; x++) {
-        for (int y = 0; y < MATRIX_SIZE; y++) {
-            cartesian_pixel_matrix_ram[x][y] = 0;
-        }
+    // 1. Efface le buffer polaire
+    for (int i = 0; i < THETA_RESOLUTION; i++) {
+        digital_clock_pattern[i].mask = 0;
     }
-
-    // 2. Récupère l'heure courante (supposé global)
+    // 2. Récupère l'heure courante
     int h_tens = current_time.hours / 10;
     int h_units = current_time.hours % 10;
     int m_tens = current_time.minutes / 10;
     int m_units = current_time.minutes % 10;
-
-    cartesian_copy_digit_on_matrix(cartesian_pixel_matrix_ram, (const uint8_t (*)[CARTESIAN_DIGIT_WIDTH])cartesian_digits[h_tens], hour_tens_pos);
-    cartesian_copy_digit_on_matrix(cartesian_pixel_matrix_ram, (const uint8_t (*)[CARTESIAN_DIGIT_WIDTH])cartesian_digits[h_units], hour_units_pos);
-    cartesian_copy_digit_on_matrix(cartesian_pixel_matrix_ram, (const uint8_t (*)[CARTESIAN_DIGIT_WIDTH])cartesian_digits[m_tens], min_hour_pos);
-    cartesian_copy_digit_on_matrix(cartesian_pixel_matrix_ram, (const uint8_t (*)[CARTESIAN_DIGIT_WIDTH])cartesian_digits[m_units], min_units_pos);
-
-    // 4. Conversion cartésien -> polaire
-    cartesian_matrix_to_polar_pattern();
+    // 3. Colle chaque digit directement dans le buffer polaire
+    convert_digit_cartesian_to_polar_pattern((const uint8_t (*)[CARTESIAN_DIGIT_WIDTH])cartesian_digits[h_tens], hour_tens_pos, digital_clock_pattern);
+    convert_digit_cartesian_to_polar_pattern((const uint8_t (*)[CARTESIAN_DIGIT_WIDTH])cartesian_digits[h_units], hour_units_pos, digital_clock_pattern);
+    convert_digit_cartesian_to_polar_pattern((const uint8_t (*)[CARTESIAN_DIGIT_WIDTH])cartesian_digits[m_tens], min_hour_pos, digital_clock_pattern);
+    convert_digit_cartesian_to_polar_pattern((const uint8_t (*)[CARTESIAN_DIGIT_WIDTH])cartesian_digits[m_units], min_units_pos, digital_clock_pattern);
 }

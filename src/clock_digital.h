@@ -39,7 +39,7 @@ extern const uint8_t* cartesian_digits[10];
 
 // pattern_t de l'affichage digital courant dans lequel on viendra coller la conversion cartésienne / polaire 
 // de la matrice de pixels, elle en PROGMEM
-extern volatile pattern_t digital_clock_pattern[THETA_RESOLUTION];
+pattern_t digital_clock_pattern[THETA_RESOLUTION];
 
 /// @brief fonction de maj de l'affichage digital
 void update_digital_clock();
