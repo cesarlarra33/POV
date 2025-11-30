@@ -1,6 +1,8 @@
 #include "clock_rounded.h"
+#include "uart.h"
 #include <stdio.h>
 #include <string.h>
+#include "clock_digital.h"
 
 
 #define UART_BUF_SIZE 64
@@ -108,9 +110,17 @@ void handle_message(char *uart_received_buffer){
             break;
         }
 
+        case 'd':
+        {
+            current_clock_style = DIGITAL;
+            uart_putstring("Affichage de l'horloge DIGITAL\n");
+            current_pattern = digital_clock_pattern;
+            break;
+        }
+
         default:
             // si aucune commande n'est reconnue on affiche l'usage
-            uart_putstring("Commande non recconue, usage : \n- Pour regler l'h : hHH:MM\n- Pour changer de cadran a (analog), r (rounded-digital), d (digital)\n");
+            uart_putstring("Commande non recconue, usage : \n- Pour regler l'h : hHH:MM\n- Pour modifier le message : mMESSAGE\n- Pour changer de cadran a (analog), r (rounded-digital), d (digital)\n");
             break;
     }
 }

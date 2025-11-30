@@ -3,7 +3,7 @@
 #include "clock_template.h"
 #include <stddef.h>
 #include "clock_rounded.h"
-
+#include "clock_digital.h"
 
 volatile time_t current_time = {0, 0, 0};
 volatile uint8_t second_elapsed = 0;
@@ -157,7 +157,11 @@ void update_clock(int clock_style){
     case ROUNDED_D:
         update_rounded_d_clock(); 
         break;
-    
+
+    case DIGITAL:
+        update_digital_clock();
+        break;
+
     default:
         break;
     }
