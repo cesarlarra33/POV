@@ -1,5 +1,6 @@
 #include "clock_rounded.h"
 #include <stdio.h>
+#include <string.h>
 
 
 #define UART_BUF_SIZE 64
@@ -63,11 +64,37 @@ void handle_message(char *uart_received_buffer){
             break;
         }
 
+        // si la commande commence par m, alors c'est que suit le message : 'mHELLO'
+        case 'm':
+        {   
+            // vérifie que le msg dépase pas la taille max
+            size_t len = strlen(uart_received_buffer);
+            // si msg trop long, on le tronque
+            if (len > MAX_MESSAGE_LENGTH) {
+                len = MAX_MESSAGE_LENGTH; 
+                uart_putstring("Message tronque\n");
+            }
+            // copie le msg dans le buffer du current_message, conversion en minuscules
+            for (size_t i = 0; i < len; ++i) {
+                char c = uart_received_buffer[i + 1];
+                if (c >= 'A' && c <= 'Z')
+                    message_buffer[i] = c + ('a' - 'A');
+                else
+                    message_buffer[i] = c;
+            }
+            // termine la string
+            message_buffer[len] = '\0'; 
+            new_message = 1;
+            current_message_active = 1;
+            uart_putstring("Message change\n");
+            break;
+        }
+
         case 'a':
         {
             current_clock_style = ANALOG;
             uart_putstring("Affichage de l'horloge ANALOG\n");
-            load_template(analog_clock_base_pattern);
+            //load_template(analog_clock_base_pattern);
             current_pattern = display_pattern_buffer;
             break;
         }
@@ -76,7 +103,7 @@ void handle_message(char *uart_received_buffer){
         {
             current_clock_style = ROUNDED_D;
             uart_putstring("Affichage de l'horloge ROUNDED_DIGITAL\n");
-            load_template(rounded_clock_base_pattern);
+            //load_template(rounded_clock_base_pattern);
             current_pattern = display_pattern_buffer;
             break;
         }

@@ -78,4 +78,10 @@ void start_clock();
 /// @param minute la minute (0-59)
 void set_clock_time(uint8_t hour, uint8_t minute); 
 
+/// @brief renvoie l'index du pattern dont l'angle est le plus proche de target_angle (0..359)
+/// @param table le tableau de pattern_t à chercher
+/// @param size la taille du tableau
+/// @param target_angle l'angle cible
+int find_index_by_angle_nearest(const pattern_t *table, int size, int target_angle);
+
 #endif

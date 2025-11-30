@@ -2,14 +2,8 @@
 #define CLOCK_ROUNDED_H
 
 #include "pattern.h"
-
-int find_index_by_angle_nearest(const pattern_t *table, int size, int target_angle);
-
-
-
 #include "pattern.h"
 #include "clock.h"
-
 
 // tableau de pattern_t de la même taille que le cedran de clock pck ca fonctionnait bien
 // stocké en PROGMEM 
@@ -18,6 +12,15 @@ extern const pattern_t rounded_clock_base_pattern[CLOCK_PATTERN_SIZE] PROGMEM;
 // largeurs des tableaux stocké en progmem pourla fore de chaque chiffre 
 #define COLUN_WIDTH 5
 #define NUMBER_WIDTH 7
+
+// largeur des lettres (l sera plus etroit que w)
+#define LETTER_WIDTH 4
+#define THIN_LETTER_WIDTH 3
+#define WIDE_LETTER_WIDTH 5
+
+// plage d'angles sur laquelle on peut placer des lettres [83°-> 0°] u [0°->276°]
+#define LETTER_START_ANGLE 83 
+#define LETTER_END_ANGLE 276
 
 
 // tableaux de pattern_t correspondant aux chiffres et aux ":"
@@ -49,12 +52,57 @@ enum SYMBOLS {
     COLON
 };
 
-#define NUM_SYMBOLS 11
+// enum pour accéder aux lettres de l'alphabet
+enum {
+    CHAR_A = 0,
+    CHAR_B,
+    CHAR_C,
+    CHAR_D,
+    CHAR_E,
+    CHAR_F,
+    CHAR_G,
+    CHAR_H,
+    CHAR_I,
+    CHAR_J,
+    CHAR_K,
+    CHAR_L,
+    CHAR_M,
+    CHAR_N,
+    CHAR_O,
+    CHAR_P,
+    CHAR_Q,
+    CHAR_R,
+    CHAR_S,
+    CHAR_T,
+    CHAR_U,
+    CHAR_V,
+    CHAR_W,
+    CHAR_X,
+    CHAR_Y,
+    CHAR_Z,
+
+    ALPHABET_SIZE
+} alphabet_index_t;
+
+// structure pour stocker un pointeur vers un pattern_t et sa largeur
+// servira à acceder plus facilement aux patterns des lettres. 
+typedef struct {
+    const pattern_t* pattern;   
+    uint8_t width;              
+} letter_entry_t;
+
+// paramètres du message à afficher
+#define MAX_MESSAGE_LENGTH 9
+extern volatile char message_buffer[MAX_MESSAGE_LENGTH]; // buffer du message courant
+extern volatile uint8_t new_message; // sert à indiquer qu'un nouveau message est dispo
+extern volatile uint8_t current_message_active; // sert à que le current_msg ne disparaisse à chaque refresh
+
+#define NUM_SYMBOLS 11 // 10 chiffres + ":"
 
 //tableau de pointeurs vers les symboles
 extern const pattern_t* symbol_patterns[NUM_SYMBOLS];
 
-// index où doivent se trouver chaque chiffres
+// indexs où doivent se trouver chaque chiffres
 #define HOUR_TENS_IDX 93
 #define HOUR_UNITS_IDX (HOUR_TENS_IDX + NUMBER_WIDTH)
 
