@@ -14,7 +14,7 @@
 #define LEDS_BRIGHTNESS_TICKS 1
 
 // nombre de ticks à anticiper pour précharger un buffer avant son allumage 
-#define PRELOAD_TICKS 6
+#define PRELOAD_TICKS 6U
 
 /// @brief configure l'horloge comme une sortie
 void set_CLOCK_as_output(); 

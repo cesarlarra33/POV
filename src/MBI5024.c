@@ -218,11 +218,16 @@ void display_patterns_from_ram(const pattern_t *pattern_dict, uint16_t pattern_c
     uint16_t ticks_on = rotation_ticks / 360U;
 
     for (uint16_t i = 0; i < pattern_count; ++i) {
-        int16_t raw_angle = pattern_dict[i].angle;
-        uint16_t current_angle = wrap_angle(raw_angle);
+        // suppression du wrapper d'angle pour gagner des cycles car on 
+        // part du postulat que les angles sont déjà dans [0, 360[
+
+        //int16_t raw_angle = pattern_dict[i].angle;
+        uint16_t current_angle = pattern_dict[i].angle; //wrap_angle(raw_angle);
         uint16_t mask = pattern_dict[i].mask;
 
+        
         uint32_t target32 = ((uint32_t)rotation_ticks * (uint32_t)current_angle) / 360U;
+        // si target en 32bits  dépasse le max à afficher sur 16bits alors on le met au max
         uint16_t target = (target32 > 0xFFFFU) ? 0xFFFFU : (uint16_t)target32;
 
         uint16_t preload_target = (target > PRELOAD_TICKS) ? (uint16_t)(target - PRELOAD_TICKS) : 0U;

@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "hall_sensor.h"
 #include "MBI5024.h"
+#include "speedometer.h"
 
 #include <avr/pgmspace.h>
 #include <avr/io.h>
@@ -36,7 +37,8 @@ typedef struct {
 enum clocks {
 	ANALOG, 
 	ROUNDED_D,
-	DIGITAL
+	DIGITAL, 
+	SPEEDOMETER
 }; 
 
 // variable qui indique quel style de clock on affiche 

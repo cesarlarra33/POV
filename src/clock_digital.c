@@ -3,9 +3,6 @@
 #include <stdint.h>
 #include "digits.h"
 
-// -----------------------------------------------------------------------------
-// CONFIG / CONSTANTES
-// -----------------------------------------------------------------------------
 
 #if (THETA_RESOLUTION % 4) != 0
 # error "THETA_RESOLUTION doit être un multiple de 4"
@@ -18,19 +15,13 @@
 pattern_t digital_clock_pattern[THETA_RESOLUTION] = {0};
 
 
-
-
-// -----------------------------------------------------------------------------
-// MISE A JOUR DE L'HORLOGE DIGITALE
-// -----------------------------------------------------------------------------
-
 void update_digital_clock(void) {
     static uint8_t last_minute = 255;
 
     uint8_t hour   = current_time.hours;
     uint8_t minute = current_time.minutes;
 
-    // On ne recalcule le pattern que si la minute a changé.
+    // on recalcuule que si les min ont changé car on affiche pas les secondes icit
     if (minute == last_minute) {
         return;
     }
@@ -41,7 +32,7 @@ void update_digital_clock(void) {
     uint8_t m_tens  = minute / 10;
     uint8_t m_units = minute % 10;
 
-    // Tableaux de pointeurs pour chaque quart
+    // tableaux de pointeurs pour chaque quart du tour
     const pattern_t* digit_quart_HG[10] = {
         number_0_Q1, number_1_Q1, number_2_Q1, number_3_Q1, number_4_Q1,
         number_5_Q1, number_6_Q1, number_7_Q1, number_8_Q1, number_9_Q1
@@ -59,10 +50,9 @@ void update_digital_clock(void) {
         number_5_Q4, number_6_Q4, number_7_Q4, number_8_Q4, number_9_Q4
     };
 
-    // Ordre logique des quarts sur le cadran
-    // ...
+    
 
-    // Assemblage effectif dans digital_clock_pattern
+    // assemblage des quarts dans le digital clock pattern
     memcpy_P(&digital_clock_pattern[0 * QUART_SIZE],
              digit_quart_HG[h_tens],
              QUART_SIZE * sizeof(pattern_t)); // Nord→Ouest
@@ -79,5 +69,4 @@ void update_digital_clock(void) {
              digit_quart_HD[h_units],
              QUART_SIZE * sizeof(pattern_t)); // Est→Nord
 
-    // ...
 }

@@ -161,6 +161,9 @@ void update_clock(int clock_style){
     case DIGITAL:
         update_digital_clock();
         break;
+    case SPEEDOMETER:
+        update_speedometer(); 
+        break;
 
     default:
         break;

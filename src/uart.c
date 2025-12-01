@@ -118,6 +118,14 @@ void handle_message(char *uart_received_buffer){
             break;
         }
 
+        case 's':
+        {
+            current_clock_style = SPEEDOMETER;
+            uart_putstring("Affichage du SpeedoMeter\n");
+            current_pattern = display_pattern_buffer;
+            break;
+        }
+
         default:
             // si aucune commande n'est reconnue on affiche l'usage
             uart_putstring("Commande non recconue, usage : \n- Pour regler l'h : hHH:MM\n- Pour modifier le message : mMESSAGE\n- Pour changer de cadran a (analog), r (rounded-digital), d (digital)\n");
