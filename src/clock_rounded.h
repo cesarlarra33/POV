@@ -53,7 +53,7 @@ enum SYMBOLS {
 };
 
 // enum pour accéder aux lettres de l'alphabet
-enum {
+typedef enum {
     CHAR_A = 0,
     CHAR_B,
     CHAR_C,

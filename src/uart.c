@@ -126,6 +126,15 @@ void handle_message(char *uart_received_buffer){
             break;
         }
 
+        case 'i':
+        {
+            current_clock_style = IMAGE;
+            uart_putstring("Affichage de l'image\n");
+            // On signale que l'affichage doit être mis à jour immédiatement
+            clock_dirty = 1; 
+            break;
+        }
+
         default:
             // si aucune commande n'est reconnue on affiche l'usage
             uart_putstring("Commande non recconue, usage : \n- Pour regler l'h : hHH:MM\n- Pour modifier le message : mMESSAGE\n- Pour changer de cadran a (analog), r (rounded-digital), d (digital)\n");

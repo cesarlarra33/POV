@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include "clock_rounded.h"
 #include "clock_digital.h"
+#include "image.h"
 
 volatile time_t current_time = {0, 0, 0};
 volatile uint8_t second_elapsed = 0;
@@ -163,6 +164,12 @@ void update_clock(int clock_style){
         break;
     case SPEEDOMETER:
         update_speedometer(); 
+        break;
+    case IMAGE:
+        // On charge le motif du cœur depuis la mémoire programme vers le buffer RAM
+        load_template(image_pattern);
+        // On pointe vers ce buffer RAM pour l'affichage
+        current_pattern = display_pattern_buffer;
         break;
 
     default:
