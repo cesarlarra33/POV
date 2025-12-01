@@ -5,6 +5,7 @@
 #include "hall_sensor.h"
 #include "MBI5024.h"
 #include "speedometer.h"
+#include "image.h"
 
 #include <avr/pgmspace.h>
 #include <avr/io.h>
@@ -38,7 +39,8 @@ enum clocks {
 	ANALOG, 
 	ROUNDED_D,
 	DIGITAL, 
-	SPEEDOMETER
+	SPEEDOMETER, 
+	IMAGE
 }; 
 
 // variable qui indique quel style de clock on affiche 
@@ -70,7 +72,7 @@ void load_template(const pattern_t *template_progmem);
 void init_clock();
 
 /// @brief met à jour l'affichage de l'horloge en fonction du style courant
-void update_clock();
+void update_clock(int clock_style);
 
 /// @brief démarre la boucle principale de l'horloge
 void start_clock();

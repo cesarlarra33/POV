@@ -24,7 +24,7 @@ extern const cartesian_point_t min_units_pos;
 
 // pattern_t de l'affichage digital courant dans lequel on viendra coller la conversion cartésienne / polaire 
 // des digits dessinés en cartésien 
-pattern_t digital_clock_pattern[THETA_RESOLUTION];
+extern pattern_t digital_clock_pattern[THETA_RESOLUTION];
 
 /// @brief fonction de maj de l'affichage digital
 void update_digital_clock();
