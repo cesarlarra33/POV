@@ -3,14 +3,14 @@
 
 #include "pattern.h"
 
-#define THETA_RESOLUTION 120 // nombre de pattenr_t pour faire un tour complet (360°)
+#define THETA_RESOLUTION 120// nombre de pattenr_t pour faire un tour complet (360°)
 
-#define CARTESIAN_DIGIT_HEIGHT 12
-#define CARTESIAN_DIGIT_WIDTH 10
+#define CARTESIAN_DIGIT_HEIGHT 16
+#define CARTESIAN_DIGIT_WIDTH 16
 
 // struct qui sert à décrire une position cartésienne
 typedef struct {
-    uint8_t x;
+    int8_t x;
     int8_t y;
 } cartesian_point_t;
 
@@ -19,9 +19,7 @@ extern const cartesian_point_t hour_units_pos;
 extern const cartesian_point_t min_hour_pos;
 extern const cartesian_point_t min_units_pos;
 
-#define MATRIX_SIZE 2 * NB_LEDS
-// Matrice de pixels pour l'affichage digital (0 = éteint, 1 = allumé)
-extern const uint8_t cartesian_pixel_matrix[MATRIX_SIZE][MATRIX_SIZE] PROGMEM;
+
 
 // matrices de bits pour la réprésentation cartésienne des digits 0-9
 extern const uint8_t digit_0[CARTESIAN_DIGIT_HEIGHT][CARTESIAN_DIGIT_WIDTH]; 
@@ -38,7 +36,7 @@ extern const uint8_t digit_9[CARTESIAN_DIGIT_HEIGHT][CARTESIAN_DIGIT_WIDTH];
 extern const uint8_t* cartesian_digits[10];
 
 // pattern_t de l'affichage digital courant dans lequel on viendra coller la conversion cartésienne / polaire 
-// de la matrice de pixels, elle en PROGMEM
+// des digits dessinés en cartésien 
 pattern_t digital_clock_pattern[THETA_RESOLUTION];
 
 /// @brief fonction de maj de l'affichage digital
