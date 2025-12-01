@@ -1,10 +1,7 @@
 #include "image.h"
 #include "utils.h"
 
-// Motif généré depuis l'image "coeur.jpg"
-// Résolution : 2 degrés
-// Logique : Cœur plein (Solid), du centre vers l'extérieur.
-// Gauche (Arg 1) = Bord Extérieur | Droite (Arg 16) = Centre
+
 const pattern_t image_pattern[] PROGMEM = {
     { .angle = 0U, .mask = MASK16(0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1) },
     { .angle = 3U, .mask = MASK16(0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1) },
