@@ -56,8 +56,8 @@ void handle_message(char *uart_received_buffer){
         case 'h':
         {
             int hour = 0, minute = 0;
-            // Format attendu : hHH:MM
-            if (sscanf(uart_received_buffer + 1, "%2d:%2d", &hour, &minute) == 2) {
+            // Format attendu : hHH:MM ou hH:M, accepte 1 ou 2 chiffres
+            if (sscanf(uart_received_buffer + 1, "%d:%d", &hour, &minute) == 2) {
                 set_clock_time(hour, minute);
                 uart_putstring("Heure reglee\n");
             } else {

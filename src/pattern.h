@@ -7,7 +7,7 @@
 #include "utils.h"
 
 typedef struct {
-    int16_t angle;  // angle logique en degrés (peut inclure de petits offsets négatifs)
+    uint16_t angle;  // angle logique en degrés (peut inclure de petits offsets négatifs)
     uint16_t mask;  // bit i -> LED i (1 = allumé)
 } pattern_t;
 
