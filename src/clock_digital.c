@@ -16,7 +16,7 @@ pattern_t digital_clock_pattern[THETA_RESOLUTION] = {0};
 
 
 void update_digital_clock(void) {
-    static uint8_t last_minute = 255;
+    static uint8_t last_minute = 255;// valeur impossible comme ca on force le 1er update
 
     uint8_t hour   = current_time.hours;
     uint8_t minute = current_time.minutes;
