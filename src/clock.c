@@ -197,19 +197,20 @@ void start_clock(){
         }
         // Tant que c'est pas un nouveau tour, on attend
         while(!new_rotation) {}
-            // si la clock est dirty (c.a.d, doit être updatée), on le fait 
-            if (clock_dirty){
-                clock_dirty = 0;
-                // on update la clock en fonction du style courant
-                update_clock(current_clock_style);
-            }
-            // on affiche le pattern courant
-            
-            if (current_clock_style == DIGITAL) {
-               display_patterns_from_ram((const pattern_t *)current_pattern, THETA_RESOLUTION);
-            } else {
-                display_patterns_from_ram((const pattern_t *)current_pattern, CLOCK_PATTERN_SIZE);
-            }
+        
+        // si la clock est dirty (c.a.d, doit être updatée), on le fait 
+        if (clock_dirty){
+            clock_dirty = 0;
+            // on update la clock en fonction du style courant
+            update_clock(current_clock_style);
+        }
+        // on affiche le pattern courant
+        
+        if (current_clock_style == DIGITAL) {
+            display_patterns_from_ram((const pattern_t *)current_pattern, THETA_RESOLUTION);
+        } else {
+            display_patterns_from_ram((const pattern_t *)current_pattern, CLOCK_PATTERN_SIZE);
+        }
     }
 }
     

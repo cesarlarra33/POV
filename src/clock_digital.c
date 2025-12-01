@@ -52,7 +52,7 @@ void update_digital_clock(void) {
 
     
 
-    // assemblage des quarts dans le digital clock pattern
+    // on va copier les bon tableaux de patterns dans digital_clock_pattern, aux bon indices correspondant aux quarts. 
     memcpy_P(&digital_clock_pattern[0 * QUART_SIZE],
              digit_quart_HG[h_tens],
              QUART_SIZE * sizeof(pattern_t)); // Nord→Ouest

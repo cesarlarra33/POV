@@ -14,6 +14,7 @@ typedef struct {
     int8_t y;
 } cartesian_point_t;
 
+// positionsn des digits réprésentants les unités/dizaines des heures/minutes
 extern const cartesian_point_t hour_tens_pos;
 extern const cartesian_point_t hour_units_pos;
 extern const cartesian_point_t min_hour_pos;
