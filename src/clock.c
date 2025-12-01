@@ -201,7 +201,12 @@ void start_clock(){
                 update_clock(current_clock_style);
             }
             // on affiche le pattern courant
-            display_patterns_from_ram((const pattern_t *)current_pattern, CLOCK_PATTERN_SIZE);
-        }
+            
+            if (current_clock_style == DIGITAL) {
+               display_patterns_from_ram((const pattern_t *)current_pattern, THETA_RESOLUTION);
+            } else {
+                display_patterns_from_ram((const pattern_t *)current_pattern, CLOCK_PATTERN_SIZE);
+            }
+    }
 }
     
