@@ -1,0 +1,38 @@
+Ouverture de l'image img/1.png
+Image convertie en niveaux de gris
+Flou gaussien appliqué (radius=1.5)
+Image inversée
+Digit découpé et placé dans le quart DOWNLEFT (offset x=32, y=32) dans un carré noir
+Binarisation appliquée (seuil=128)
+Génération du buffer polaire : angles_per_digit=30, angle_start=180
+Angle 180: mask=1111111111111111
+Angle 183: mask=1111111111111111
+Angle 186: mask=1111111111111111
+Angle 189: mask=1111111111111111
+Angle 192: mask=1111111111111111
+Angle 195: mask=1111111111111111
+Angle 198: mask=1111111111111111
+Angle 201: mask=1111111111111111
+Angle 204: mask=1111111111111111
+Angle 207: mask=1111111111111111
+Angle 210: mask=1111111111111111
+Angle 213: mask=1111111111111111
+Angle 216: mask=1111111111111111
+Angle 219: mask=1111111111111111
+Angle 222: mask=1111111111111111
+Angle 225: mask=1111111111111111
+Angle 228: mask=1111111111111111
+Angle 231: mask=1111111111111111
+Angle 234: mask=1111111111111111
+Angle 237: mask=1111111111111111
+Angle 240: mask=1111111111111111
+Angle 243: mask=1111111111111111
+Angle 246: mask=1111111111111111
+Angle 249: mask=1111111111111111
+Angle 252: mask=1111111111111111
+Angle 255: mask=1111111111111111
+Angle 258: mask=1111111111111111
+Angle 261: mask=1111111111111111
+Angle 264: mask=1111111111111111
+Angle 267: mask=1111111111111111
+Affichage du buffer C généré
