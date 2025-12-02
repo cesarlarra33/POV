@@ -119,5 +119,11 @@ extern const pattern_t* symbol_patterns[NUM_SYMBOLS];
 /// @brief fonction de mise à jour de la clock rounded. 
 void update_rounded_d_clock(); 
 
+/// @brief superpose un message (lettres a-z et chiffres 0-9) centré sur l'angle 0°
+/// @param message_buffer 
+void superpose_message(char *message_buffer);
+void superpose_symbol(const pattern_t *symbol_pattern, uint8_t pattern_width, int pattern_index); // avec la bonne signature
+void superpose_symbol_reversed(const pattern_t *symbol_pattern, uint8_t pattern_width, int pattern_index);
 
-#endif 
+extern const letter_entry_t alphabet[ALPHABET_SIZE]; 
+#endif

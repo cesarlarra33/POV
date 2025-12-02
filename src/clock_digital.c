@@ -30,20 +30,20 @@ void update_digital_clock(void) {
     uint8_t m_tens  = minute / 10;
     uint8_t m_units = minute % 10;
 
-   
-    const pattern_t* digit_quart_HG[10] = {
+    // tableaux de pointeurs pour chaque quart du tour
+    const pattern_t* digit_quart_HG[10] = { // en haut à gauche 
         number_0_Q1, number_1_Q1, number_2_Q1, number_3_Q1, number_4_Q1,
         number_5_Q1, number_6_Q1, number_7_Q1, number_8_Q1, number_9_Q1
     };
-    const pattern_t* digit_quart_BG[10] = {
+    const pattern_t* digit_quart_BG[10] = { // en bas à gauche
         number_0_Q2, number_1_Q2, number_2_Q2, number_3_Q2, number_4_Q2,
         number_5_Q2, number_6_Q2, number_7_Q2, number_8_Q2, number_9_Q2
     };
-    const pattern_t* digit_quart_BD[10] = {
+    const pattern_t* digit_quart_BD[10] = { // en bas à droite
         number_0_Q3, number_1_Q3, number_2_Q3, number_3_Q3, number_4_Q3,
         number_5_Q3, number_6_Q3, number_7_Q3, number_8_Q3, number_9_Q3
     };
-    const pattern_t* digit_quart_HD[10] = {
+    const pattern_t* digit_quart_HD[10] = { // en haut à droite
         number_0_Q4, number_1_Q4, number_2_Q4, number_3_Q4, number_4_Q4,
         number_5_Q4, number_6_Q4, number_7_Q4, number_8_Q4, number_9_Q4
     };

@@ -122,7 +122,7 @@ void handle_message(char *uart_received_buffer){
         {
             current_clock_style = SPEEDOMETER;
             uart_putstring("Affichage du SpeedoMeter\n");
-            current_pattern = display_pattern_buffer;
+            current_pattern = digital_clock_pattern;
             break;
         }
 

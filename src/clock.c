@@ -204,7 +204,6 @@ void start_clock(){
         }
         // Tant que c'est pas un nouveau tour, on attend
         while(!new_rotation) {}
-        
         // si la clock est dirty (c.a.d, doit être updatée), on le fait 
         if (clock_dirty){
             clock_dirty = 0;
